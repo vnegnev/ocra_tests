@@ -18,6 +18,11 @@ import math
 import logging # For errors
 import struct
 
+printing = False
+def print_dbg(*args, **kwargs):
+        if (printing):
+                print(*args, **kwargs)
+
 class Assembler:
 	def __init__(self):
 		self.pc = 0
@@ -115,17 +120,17 @@ class Assembler:
 		# Format A
 		elif self.opcode_table[opcode][1] == 'A':
 			reg_addr = format(int(line[1], 10), 'b').zfill(5)
-			print(reg_addr)
+			print_dbg(reg_addr)
 			if opcode == 'LD64' or opcode == 'JNZ': # Reg and addr specified
 				if line[2] in self.var_table.keys():
 					addr = self.var_table[line[2]] # Look up address of variable
-					print(self.var_table)
-					print(addr)
+					print_dbg(self.var_table)
+					print_dbg(addr)
 					
 				else:
 					try:
 						addr = int(line[2], 16) # Must be in hex
-						print(addr)
+						print_dbg(addr)
 					except ValueError:
 						logger.exception("Invalid hexadecimal number {}".format(line[2]), stack_info=True)
 
@@ -151,11 +156,11 @@ class Assembler:
 				num_cycles = math.floor(int(line[2]) * conversion_factor) # Round down
 				const = format(num_cycles, 'b').zfill(40)
 				reg_addr = format(int(line[1]), 'b')
-				print(reg_addr)
+				print_dbg(reg_addr)
 				remaining_bits = 64 - len(const) - len(opcode_bin) - len(reg_addr)
 				remainder = '0'.zfill(remaining_bits)
 				cmd = opcode_bin + remainder + reg_addr + const
-				print(cmd)
+				print_dbg(cmd)
 			else: # TXOFFSET and GRADOFFSET
 				# const = format(int(line[1], 16), 'b').zfill(40)
 				const = format(int(line[1], 10), 'b').zfill(40)
@@ -172,7 +177,7 @@ class Assembler:
 		if comment_index >= 0:
 			line = line[:comment_index]
 			line = line.strip()
-		print(line)
+		print_dbg(line)
 		return line
 
 	def assemble(self, inp_file):
