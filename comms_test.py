@@ -28,11 +28,8 @@ def read_data():
     print("Data received!")
 
 def comms_test(s):
+    # Assumes a connected socket is supplied
     # gsocket = QTcpSocket()
-
-    addr = "192.168.1.189"
-    # gsocket.connectToHost(addr, 1001)
-    s.connect((addr, 1001))
 
     # send 2 as signal to start MRI_SE_Widget (L137)
     # gsocket.write(struct.pack('<I', 2))
@@ -55,12 +52,13 @@ def comms_test(s):
     # load shim here
 
     # Set freq here
-    freq = 2.999 # MHz?
+    freq = 10 # MHz?
     s.sendall(struct.pack('<I', 1 << 28 | int(1.0e6 * freq)))
 
     # Set attenuation (has no effect without hardware)
-    at = 3 # not sure what scale this is in, just a dummy value for now!
-    s.sendall(struct.pack('<I', 3 << 28 | int(at/0.25)))    
+    if False:
+        at = 3 # not sure what scale this is in, just a dummy value for now!
+        s.sendall(struct.pack('<I', 3 << 28 | int(at/0.25)))    
 
     # Acquire data
     s.sendall(struct.pack('<I', 2 << 28 | 0 << 24))    
@@ -69,18 +67,22 @@ def comms_test(s):
     print("Recv: ")
     # defined by server code? (50000 64-bit complex ints I think; 4
     # acquisitions for spin-echo server-side test
-    bufsize = 50000*8 * 4
-    bufsize += 8*100 # just an extra 8 bytes for dbg
+    # bufsize = 5000*8 * 10
+    # bufsize = 50000*8 * 10
+    bufsize = 100000 * 8
+    # bufsize += 8*100 # just an extra 8 bytes for dbg
     buf = bytearray(bufsize)
     recvd = 0
     # recvsz = 1024
-    recvsz = 8192
+    # recvsz = 5000*8
+    recvsz = 8
     while(recvd < bufsize):
         rdata = s.recv(recvsz)
         buf[recvd:recvd+recvsz] = rdata
         recvd += recvsz
-        print(recvd//8)
-    print(recvd//8)
+        # print(recvd//8)
+
+    print("Received {:d} complex64 ints".format(recvd//8))
 
     data = np.frombuffer(buf, np.complex64)
     
@@ -91,13 +93,21 @@ def display(data):
     N = data.size
     t_axis = np.linspace(0,(N-1)/approx_sampling_period, N)
     t_axis_us = t_axis*1e6
-    plt.plot(t_axis_us, np.real(data))
-    plt.plot(t_axis_us, np.imag(data))
+    if True:
+        x = t_axis_us
+    else:
+        x = np.arange(N)
+    plt.plot(x, np.real(data))
+    plt.plot(x, np.imag(data))
     plt.xlabel('time (us)')
     plt.show()
 
 # if __name__ == "__main__":
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    addr = "192.168.1.189"
+    # gsocket.connectToHost(addr, 1001)
+    s.connect((addr, 1001))
+
     data = comms_test(s)
     display(data)
 
