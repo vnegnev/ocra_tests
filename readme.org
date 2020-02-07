@@ -1,5 +1,15 @@
-ocra_tests
+#+TITLE: ocra_tests
 
-Basic set of experiments and tests for the RP-122 branch of ocra.
-May work for RP-125 as well.
-Not very polished for now; work-in-progress.
+* Overview
+
+  Basic set of experiments and tests for the RP-122 branch of ocra.
+  May work for RP-125 as well.
+  Not very polished for now; work-in-progress.
+
+* Setup guide
+
+  - Clone the repo
+
+  - Copy =local_settings.py.example= to =local_settings.py=, then edit =local_settings.py= to match your local config
+
+  - Run =comms_test.py=

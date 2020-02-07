@@ -5,8 +5,10 @@
 import struct, socket
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 # from PyQt5.QtNetwork import QTcpSocket
 import pdb; st = pdb.set_trace
+from local_settings import rp_ip_address
 
 from ocra_lib.assembler import Assembler
 
@@ -102,13 +104,20 @@ def display(data):
     plt.xlabel('time (us)')
     plt.show()
 
+    return t_axis_us, data
+
 # if __name__ == "__main__":
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    addr = "192.168.1.189"
-    # gsocket.connectToHost(addr, 1001)
-    s.connect((addr, 1001))
+    # # gsocket.connectToHost(addr, 1001)
+    s.connect((rp_ip_address, 1001))
 
     data = comms_test(s)
-    display(data)
+    t, data = display(data)
 
-    # comms_test()
+    if False:
+        # just for debugging the CSV saving
+        t = np.linspace(0,2*np.pi,10)
+        data = np.cos(t) + 1j * np.sin(t)
+
+    data_block = np.vstack([t, data]).T # just create a column matrix of the two vectors
+    np.savetxt("data.csv", data_block, delimiter=",")    

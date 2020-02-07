@@ -2,3 +2,5 @@
 *.pyc
 *.txt
 *.log
+*.csv
+local_settings.py
