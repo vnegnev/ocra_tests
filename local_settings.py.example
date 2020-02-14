@@ -1,1 +1,2 @@
 rp_ip_address = "192.168.1.189"
+lo_freq_MHz = 10.0 # local-oscillator frequency (MHz) on the RP

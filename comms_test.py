@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import csv
 # from PyQt5.QtNetwork import QTcpSocket
 import pdb; st = pdb.set_trace
-from local_settings import rp_ip_address
+from local_settings import rp_ip_address, lo_freq_MHz
 
 from ocra_lib.assembler import Assembler
 
@@ -54,7 +54,7 @@ def comms_test(s):
     # load shim here
 
     # Set freq here
-    freq = 10 # MHz?
+    freq = lo_freq_MHz # MHz?
     s.sendall(struct.pack('<I', 1 << 28 | int(1.0e6 * freq)))
 
     # Set attenuation (has no effect without hardware)
