@@ -5,6 +5,8 @@
   Basic set of experiments and tests for the RP-122 branch of ocra.
   May work for RP-125 as well.
   Not very polished for now; work-in-progress.
+  
+  See marcos_client for the new main repo for PC-side scripts and tests.
 
 * Setup guide
 
